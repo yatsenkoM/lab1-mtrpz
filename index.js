@@ -47,3 +47,7 @@ fs.readFile(filePath, { encoding: 'utf8' }, (err, data) => {
     process.exit(1);
   }
 });
+
+const doNothing = () => {
+//this function does nothing!
+};
