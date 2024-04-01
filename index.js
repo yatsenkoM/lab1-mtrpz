@@ -3,9 +3,11 @@ const { convertParagraphs, checkTextForNestedMarkup, checkTextForNoClosedTags } 
 const REGEX = require('./constants');
 
 const filePath = process.argv[2];
+const outputFilePathIndex = process.argv.indexOf('--out');
+const outputFilePath = outputFilePathIndex !== -1 ? process.argv[outputFilePathIndex + 1] : null;
 
 if (!filePath) {
-  console.error('Usage: node your_script.js <path_to_markdown_file>');
+  console.error('Usage: node index.js <path_to_markdown_file> [--out <output_file_path>]');
   process.exit(1);
 }
 
@@ -29,7 +31,17 @@ fs.readFile(filePath, { encoding: 'utf8' }, (err, data) => {
     checkTextForNoClosedTags(data);
 
     const res = convertMarkdownToHTML(data);
-    console.log(res);
+    if (outputFilePath) {
+      fs.writeFile(outputFilePath, res, (writeErr) => {
+        if (err) {
+          console.error('Error writing to file:', writeErr);
+          process.exit(1);
+        }
+        console.log(`HTML content has been written to ${outputFilePath}`);
+      });
+    } else {
+      console.log(res);
+    }
   } catch (error) {
     console.error('Error:', error.message);
     process.exit(1);
